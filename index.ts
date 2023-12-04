@@ -1,8 +1,34 @@
 import express from 'express'
 import { AdminRoute, VendorRoute } from './routes'
+import mongoose from 'mongoose'; 
+import dotenv from 'dotenv'
+
+(async () => {
+  // Load the environment variables
+  await dotenv.config({
+    path: './.env'
+  });
+})();
+
+
 
 const app = express()
 
+app.use(express.json());
+app.use(express.urlencoded({extended: true}))
+
+const connectDB = async ()=>{
+  try {
+    const connectionInstance= await mongoose.connect(`${process.env.MONGODB_URI}`)
+    console.log(`\nMongoDB connected !! DB HOST: ${connectionInstance.connection.host} `);
+  } catch (error) {
+    console.log("mongodb connection failed at db/index.js", error);
+    process.exit(1);
+  }
+}
+
+connectDB()
+        
 const PORT =8000
 
 app.use("/admin", AdminRoute);
