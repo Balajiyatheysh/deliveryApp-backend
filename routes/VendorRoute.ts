@@ -6,6 +6,8 @@ import multer from 'multer';
 
 const router = express.Router();
 
+router.post("/login", VendorLogin)
+
 router.get("/", (req: Request, res: Response, next: NextFunction)=>{
   res.json({message:"Hello from vendor page"})
 })
