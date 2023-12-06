@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { CreateVendorInput } from "../dto";
+import { CreateVendorInput } from "../dto/";
 import { Vendor } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utility";
 
