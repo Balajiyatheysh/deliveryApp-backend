@@ -28,3 +28,13 @@ export const ValidateSignature  = async(req: Request) => {
   }
   return false
 };
+
+export const ValidatePassword = async (enteredPassword : string,savedPassword:string  , salt : string) => {
+
+  return await GeneratePassword(enteredPassword,salt) === savedPassword;
+
+}
+
+export const GenerateSignature = async (payload: AuthPayload) => {
+  return await jwt.sign(payload, APP_SECRET, {expiresIn: '15d'})
+}
