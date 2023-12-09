@@ -12,22 +12,7 @@ export const GeneratePassword = async (password: string, salt: string)=>{
   return await bcrypt.hash(password, salt)
 }
 
-export const ValidateSignature  = async(req: Request) => {
 
-  const signature = req.get('Authorization');
-
-  if(signature){
-      try {
-          const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET) as AuthPayload; 
-          req.user = payload;
-          return true;
-
-      } catch(err){
-          return false
-      } 
-  }
-  return false
-};
 
 export const ValidatePassword = async (enteredPassword : string,savedPassword:string  , salt : string) => {
 
@@ -36,5 +21,24 @@ export const ValidatePassword = async (enteredPassword : string,savedPassword:st
 }
 
 export const GenerateSignature = async (payload: AuthPayload) => {
-  return await jwt.sign(payload, APP_SECRET, {expiresIn: '15d'})
+  return await jwt.sign(payload, APP_SECRET, {expiresIn: '1d'})
 }
+
+export const ValidateSignature  = async(req: Request) => {
+  // console.log(req)
+  const signature = req.get('Authorization');
+  // console.log(signature)
+
+  if(signature){
+      try {
+          const payload = await jwt.verify(signature.split(' ')[1], APP_SECRET) as AuthPayload; 
+          req.user = payload;
+          // console.log(payload)
+          return true;
+
+      } catch(err){
+          return false
+      } 
+  }
+  return false
+};

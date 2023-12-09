@@ -8,10 +8,12 @@ declare global {
             user?: AuthPayload
         }
     }
-}
+} 
 
 export const Authenticate = async (req: Request, res: Response, next: NextFunction) => {
 
+    console.log(req);
+    // console.log(req);
     const signature = await ValidateSignature(req);
     if(signature){
         return next()
