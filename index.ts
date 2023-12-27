@@ -1,7 +1,8 @@
-import express from 'express'
+import express, {Request, Response, NextFunction} from 'express'
 import { AdminRoute, VendorRoute } from './routes'
 import mongoose from 'mongoose'; 
 import dotenv from 'dotenv'
+import path from 'path'
 
 (async () => {
   // Load the environment variables
@@ -16,6 +17,7 @@ const app = express()
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
+app.use('/images' , express.static(path.join(__filename, 'images')))
 
 const connectDB = async ()=>{
   try {

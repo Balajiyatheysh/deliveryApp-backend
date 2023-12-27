@@ -11,7 +11,8 @@ const imageStorage = multer.diskStorage({
     cb(null, 'images')
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString()+'_'+ file.originalname)
+    const timestamp = new Date().toISOString().replace(/:/g, '-');
+    cb(null, timestamp + '_' + file.originalname)
   }
 })
 
@@ -20,14 +21,15 @@ const images = multer({storage: imageStorage}).array('images', 10);
 
 
 router.post("/login", VendorLogin)
-// router.use(Authenticate)
 
-router.get('/profile', Authenticate, GetVendorProfile);
+router.use(Authenticate)
+
+router.get('/profile', GetVendorProfile);
 router.patch('/profile', UpdateVendorProfile);
 router.patch('/coverimage', images, UpdateVendorCoverImage);
 router.patch('/service', UpdateVendorService);
 
-router.post("/food", images, AddFood);
+router.post("/food", images,  AddFood);
 router.get("/foods", GetFoods);
 
 router.get("/", (req: Request, res: Response, next: NextFunction)=>{

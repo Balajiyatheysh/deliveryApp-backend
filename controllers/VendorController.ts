@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { VendorLoginInput } from "../dto";
+import { CreateFoodInput,EditVendorInput, VendorLoginInput } from "../dto";
 import { FindVendor } from "./AdminController";
 import { GenerateSignature, ValidatePassword } from "../utility";
-import { EditVendorInput } from "../dto";
+import { Food } from "../models";
 
 export const VendorLogin = async (
   req: Request,
@@ -65,6 +65,7 @@ export const UpdateVendorProfile = async (
 
       return res.json(updatedUser);
     }
+    return res.json(existingUser);
   }
 
   res.json({ message: "Unable to update Vendor profile" });
@@ -121,7 +122,53 @@ export const AddFood = async (
   res: Response,
   next: NextFunction
 ) => {
+  const user= req.user;
+  const {name, description, category, foodType, readyTime, price} = <CreateFoodInput>req.body;
+  if (user) {
+    const vendor = await FindVendor(user._id);
+
+    if (vendor !== null) {
+      const files = req.files as [Express.Multer.File];
+
+      const images = files.map((file: Express.Multer.File) => {
+        const sanitizedFileName = file.filename.replace(/\s+/g, '_');
+        return sanitizedFileName;
+      });
+      
+      const createFood = await Food.create({
+        vendorId: vendor._id,
+        name: name,
+        description: description,
+        category: category,
+        foodType: foodType,
+        readyTime: readyTime,
+        price: price,
+        images: images,
+        rating: 0,
+      })
+
+      vendor.foods.push(createFood);
+      const saveResult = await vendor.save();
+
+      return res.json(saveResult);
+    }
+  }
   res.json({ message: "Hello from vendor add food" });
+};
+
+export const GetFoods = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const user = req.user;
+  if (user) {
+    const foods = await Food.find({ vendorId: user._id });
+    if (foods !== null) {
+      return res.json(foods);
+    }
+  }
+  res.json({ message: "Food not found" });
 };
 
 export const AddOffer = async (
@@ -132,20 +179,13 @@ export const AddOffer = async (
   res.json({ message: "Hello from vendor add offer" });
 };
 
+
 export const EditOffer = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   res.json({ message: "Hello from vendor edit offer" });
-};
-
-export const GetFoods = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  res.json({ message: "Hello from vendor get foods" });
 };
 
 export const GetOffers = async (
