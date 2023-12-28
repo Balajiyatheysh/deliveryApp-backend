@@ -1,5 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
-import express from 'express'
+import mongoose, { Schema, Document } from "mongoose";
 import validator from 'validator'
 
 interface VendorDoc extends Document {
