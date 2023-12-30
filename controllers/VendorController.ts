@@ -204,13 +204,6 @@ export const GetOrderDetails = async (
   res.json({ message: "Hello from vendor get order details" });
 };
 
-export const GetOrders = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  res.json({ message: "Hello from vendor get orders" });
-};
 
 export const ProcessOrder = async (
   req: Request,

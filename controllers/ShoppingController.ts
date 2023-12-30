@@ -40,7 +40,7 @@ export const GetFoodAvailableIn30Minutes = async (req: Request, res: Response, n
     let foodResult: any =[];
     result.map(vendor =>{
       const foods = vendor.foods as [FoodDoc];
-      foodResult.push(...foods.filter(food => food.readyTime <= 30));
+      foodResult.push(...foods.filter(food => food.readyTime <= 20));
     })
    return res.status(200).json(foodResult);
   }
