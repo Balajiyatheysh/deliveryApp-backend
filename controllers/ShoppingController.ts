@@ -6,14 +6,78 @@ import { FoodDoc, Vendor, Offer } from '../models';
 
 
 export const GetFoodAvailability = async (req: Request, res: Response, next: NextFunction) => {
+  const pincode = req.params.pincode;
+  const result = await Vendor.find({pincode: pincode, serviceAvailable: true})
+  .sort([["rating", "descending"]])
+  .populate('foods');
+
+  if (result.length > 0) {
+   return res.status(200).json(result);
+  }
+
+  return res.status(404).json({message: "No vendor found"});
+
 }
 
-export const GetTopRestaurants = async (req: Request, res: Response, next: NextFunction) => {}
+export const GetTopRestaurants = async (req: Request, res: Response, next: NextFunction) => {
+  const pincode = req.params.pincode;
+  const result = await Vendor.find({pincode: pincode, serviceAvailable: true})
+  .sort([["rating", "descending"]])
+  .limit(1)
+  if (result.length > 0) {
+   return res.status(200).json(result);
+  }
 
-export const GetFoodAvailableIn30Minutes = async (req: Request, res: Response, next: NextFunction) => {}
+  return res.status(404).json({message: "No vendor found"});
+}
 
-export const SearchFoods = async (req: Request, res: Response, next: NextFunction) => {}
+export const GetFoodAvailableIn30Minutes = async (req: Request, res: Response, next: NextFunction) => {
+  const pincode = req.params.pincode;
+  const result = await Vendor.find({pincode: pincode, serviceAvailable: true})
+  .sort([["rating", "descending"]])
+  .populate('foods');
+  if (result.length > 0) {
+    let foodResult: any =[];
+    result.map(vendor =>{
+      const foods = vendor.foods as [FoodDoc];
+      foodResult.push(...foods.filter(food => food.readyTime <= 30));
+    })
+   return res.status(200).json(foodResult);
+  }
+  return res.status(404).json({message: "No vendor found"});
+}
 
-export const GetAvailableOffers = async (req: Request, res: Response, next: NextFunction) => {}
+export const SearchFoods = async (req: Request, res: Response, next: NextFunction) => {
+  const pincode = req.params.pincode;
+  const result = await Vendor.find({pincode: pincode, serviceAvailable: true})
+  .populate('foods');
 
-export const GetRestaurantByID = async (req: Request, res: Response, next: NextFunction) => {}
+  if (result.length > 0) {
+    let foodResult: any =[];
+    result.map(item =>{
+      foodResult.push(...item.foods);
+    })
+   return res.status(200).json(foodResult);
+    
+  }
+  return res.status(404).json({message: "No data found"});
+}
+
+
+export const GetAvailableOffers = async (req: Request, res: Response, next: NextFunction) => {
+  const pincode = req.params.pincode;
+  const offers = await Offer.find({pincode: pincode, isActive : true});
+  if (offers) {
+    return res.status(200).json(offers);
+  }
+  return res.status(404).json({message: "Offers not found"});
+}
+
+export const GetRestaurantByID = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.params.id;
+  const result = await Vendor.findById(id).populate('foods');
+  if (result) {
+    return res.status(200).json(result);
+  }
+  return res.status(404).json({message: "No data found"});
+}
