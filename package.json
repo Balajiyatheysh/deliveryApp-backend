@@ -29,6 +29,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "ts-node-dev": "^2.0.0",
+    "twilio": "^4.20.0",
     "typescript": "^5.3.2",
     "validator": "^13.11.0"
   }

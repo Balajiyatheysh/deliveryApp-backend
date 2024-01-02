@@ -1,28 +1,28 @@
-export const GenerateOtp=()=>{
-  const otp = Math.floor(10000 + Math.random() * 900000);
+export const GenerateOtp = () => {
+  const otp = Math.floor(100000 + Math.random() * 9000000);
   let expiry = new Date();
-  expiry.setTime(new Date().getTime() + (30*60*1000));
+  expiry.setTime(new Date().getTime() + 30 * 60 * 1000);
 
   return {
     otp,
-    expiry
-  }
-}
+    expiry,
+  };
+};
 
-export const onRequestOtp = async(otp: number, toPhoneNumber: string)=>{
+export const onRequestOtp = async (otp: number, toPhoneNumber: string) => {
   try {
-    const accountSid = "Your Account SID from TWILIO DASHBOARD";
-    const authToken = "YOUR AUTH TOKEN AS I SAID ON VIDEO";
-    const client = require('twilio')(accountSid, authToken);
+    const accountSid = "AC74f291eea5b58ffb9ca7dac39f2225b5";
+    const authToken = "c9cbed21ae281fb51b2317dbf6aed8f5";
+    const client = require("twilio")(accountSid, authToken);
 
-    const response = await client.message.create({
-        body: `Your OTP is ${otp}`,
-        from: 'Your TWILIO PHONE NUMBER YOU CAN GET IT FROM YOUR DASHBOARD',
-        to: `recipient_countrycode${toPhoneNumber}` // recipient phone number // Add country before the number
-    })
+    const response = await client.messages.create({
+      body: `Your OTP is ${otp}`,
+      from: "+17176872119",
+      to: `+91${toPhoneNumber}`, // recipient phone number // Add country before the number
+    });
 
     return response;
-} catch (error){
-    return false
-}
-}
+  } catch (error) {
+    return false;
+  }
+};
