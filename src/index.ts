@@ -1,7 +1,7 @@
 import express from 'express';
 import App from './services/ExpressApp';
 import databaseConnection  from './services/Database';
-import {PORT} from '../src/config/index'
+import {PORT} from './config'
 
 const StartServer = async () =>{
   const app = express();
