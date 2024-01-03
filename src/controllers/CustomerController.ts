@@ -119,6 +119,7 @@ export const CustomerLogin = async (
   }
   return res.json({ msg: "Error with signup" });
 };
+
 export const CustomerVerify = async (
   req: Request,
   res: Response,
@@ -151,6 +152,7 @@ export const CustomerVerify = async (
   }
   return res.status(400).json({ message: "Invalid OTP" });
 };
+
 export const RequestOtp = async (
   req: Request,
   res: Response,
@@ -197,6 +199,7 @@ export const GetCustomerProfile = async (
     }
   }
 };
+
 export const EditCustomerProfile = async (
   req: Request,
   res: Response,
