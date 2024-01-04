@@ -2,12 +2,12 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { MONGODB_URI } from '../config';
 
-// (async () => {
-//   // Load the environment variables
-//   await dotenv.config({
-//     path: './.env'
-//   });
-// })();
+(async () => {
+  // Load the environment variables
+  await dotenv.config({
+    path: './.env'
+  });
+})();
 
 
 
