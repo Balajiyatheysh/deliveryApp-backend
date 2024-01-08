@@ -31,7 +31,9 @@ export const CustomerSignUp = async (
   res: Response,
   next: NextFunction
 ) => {
+
   const customerInputs = plainToClass(CreateCustomerInput, req.body);
+
   const validationError = await validate(customerInputs, {
     validationError: { target: true },
   });
@@ -43,6 +45,7 @@ export const CustomerSignUp = async (
   const { email, phone, password } = customerInputs;
 
   const salt = await GenerateSalt();
+
   const userPassword = await GeneratePassword(password, salt);
 
   const { otp, expiry } = await GenerateOtp();
@@ -50,7 +53,8 @@ export const CustomerSignUp = async (
   const existingCustomer = await Customer.find({ email: email });
   // console.log(typeof(existingCustomer));
 
-  // console.log(expiry);
+console.log(otp)
+  console.log(expiry);
 
   if (existingCustomer.length > 0) {
     return res.status(400).json({
@@ -76,7 +80,8 @@ export const CustomerSignUp = async (
 
   if (result) {
     // send otp to customer
-    await onRequestOtp(otp, phone);
+    const otpRequest= await onRequestOtp(otp, phone);
+    console.log(otpRequest);
 
     //Generate the signature
     const signature = await GenerateSignature({
@@ -139,7 +144,7 @@ export const CustomerLogin = async (
         verified: customer.verified,
         email: customer.email,
       });
-      
+
     } else {
       return res.status(400).json({ message: "Invalid Credentials" });
     }
@@ -268,7 +273,7 @@ export const EditCustomerProfile = async (
   const { firstName, lastName, address } = customerInputs;
 
   if (customer) {
-    
+
     const profile = await Customer.findById(customer._id);
 
     if (profile) {
