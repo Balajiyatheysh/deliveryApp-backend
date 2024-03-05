@@ -37,7 +37,7 @@ export const DeliverySignUp = async (req: Request, res: Response, next: NextFunc
   const result = await DeliveryUser.create({
     
     email: email,
-    password: password,
+    password: userPassword,
     salt: salt,
     phone: phone,
     firstName: firstName,
@@ -54,9 +54,11 @@ export const DeliverySignUp = async (req: Request, res: Response, next: NextFunc
 
     //Generate the Signature
     const signature = await GenerateSignature({
+
       _id: result._id,
       email: result.email,
       verified: result.verified
+
     })
 
     //Send the result

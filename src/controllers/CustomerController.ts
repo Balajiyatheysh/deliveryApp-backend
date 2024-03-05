@@ -25,6 +25,7 @@ import {
   Vendor,
   DeliveryUser,
 } from "../models";
+import Stripe from "stripe";
 
 export const CustomerSignUp = async (
   req: Request,
@@ -314,7 +315,9 @@ const assignOrderForDelivery = async (orderId: string, vendorId: string) => {
       //check the nearest delivery person and assign the order
 
       const currentOrder = await Order.findById(orderId);
+
       if (currentOrder) {
+        
         //update Delivery ID
         currentOrder.deliveryId = deliveryPerson[0]._id;
 
@@ -351,7 +354,13 @@ export const CreateOrder = async (
 
   const customer = req.user;
 
+  console.log(customer)
+
   const { txnId, amount, items } = <OrderInputs>req.body;
+
+  // console.log(`${txnId}, ${amount}`)
+
+  console.log(req.body)
 
   if (customer) {
 
@@ -380,20 +389,20 @@ export const CreateOrder = async (
       .in(cart.map((item) => item._id))
       .exec();
 
-    foods.map((food) => {
+      foods.map(food => {
 
-      cart.map(({ _id, unit }) => {
+        cart.map(({ _id, unit}) => {
 
-        if (food._id == _id) {
+            if(food._id == _id){
 
-          vendorId = food.vendorId;
+                vendorId = food.vendorId;
 
-          netAmount += food.price * unit;
+                netAmount += (food.price * unit);
 
-          cartItems.push({ food, unit });
-        }
-      });
-    });
+                cartItems.push({_id, unit});
+            }
+        })
+    })
 
     if (cartItems) {
 
@@ -623,6 +632,8 @@ export const CreatePayment = async (
 ) => {
 
   const customer = req.user;
+  const stripe = new Stripe('sk_test_51LDT0ZSAIFz1yjl4MANFzZhnzUevr6LkRXI3XdswQmT86UcSG2KEwhDPqQaiwCNEJ5MFXXjqzn1sf31cG9eJq1Xo00TTXq5FzB');
+
 
   const { amount, paymentMode, offerId } = req.body;
 
@@ -638,20 +649,43 @@ export const CreatePayment = async (
 
   }
   //perform payment gateway charge api
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'INR',
+            product_data: {
+              name: 'Your Order',
+            },
+            unit_amount: Math.floor(payableAmount * 100), 
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.FRONTEND_URL}/order-success`,
+      cancel_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
+    });
+
 
   //create record on transaction
-
-  const transaction = Transaction.create({
-    customer: customer._id,
-    vendorId: "",
-    orderId: "",
-    orderValue: payableAmount,
-    offerUsed: offerId || "NA",
-    status: "OPEN",
-    paymentMode: paymentMode,
-    paymentResponse: "Payment is cash on delivery",
-  });
-
-  //return transaction
-  return res.status(200).json(transaction);
+    const transaction = Transaction.create({
+      customer: customer._id,
+      vendorId: "",
+      orderId: "",
+      orderValue: payableAmount,
+      offerUsed: offerId || "NA",
+      status: "OPEN",
+      paymentMode: paymentMode,
+      paymentResponse: "Payment is cash on delivery",
+    });
+  
+    //return transaction
+    return res.status(200).json(transaction);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error creating payment session' });
+  }
 };

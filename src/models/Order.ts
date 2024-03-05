@@ -30,7 +30,7 @@ const OrderSchema = new Schema({
     orderDate: {type: Date },
     orderStatus: {type: String},
     remarks: {type: String},
-    deliveryId: {type: String},
+    deliveryId: {type: String},  
     readyTime:{type: Number},
      
 },{

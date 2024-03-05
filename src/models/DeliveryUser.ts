@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import { OrderDoc } from './Order';
 
 
@@ -12,8 +12,6 @@ interface DeliveryUserDoc extends Document {
     phone: string;
     pincode: string;
     verified: boolean;
-    otp: number;
-    otp_expiry: Date;
     lat: number;
     lng: number;
     isAvailable: boolean;
@@ -30,8 +28,6 @@ const DeliveryUserSchema = new Schema({
     phone: {type: String, required: true},
     pincode: {type: String},
     verified: {type: Boolean},
-    otp: {type: Number},
-    otp_expiry: {type: Date},
     lat: {type: Number},
     lng: {type: Number},
     isAvailable: {type: Boolean, default: false}

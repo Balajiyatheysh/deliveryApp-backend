@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { CreateVendorInput } from "../dto";
-import { Vendor } from "../models";
+import { Vendor, DeliveryUser, Transaction } from "../models";
 import { GeneratePassword, GenerateSalt } from "../utility";
 
 
@@ -67,4 +67,61 @@ export const GetVendorByID = async (req: Request, res: Response, next: NextFunct
     return res.json(vendor)
   }
   return res.json({"message":"Vendor not found"})
+}
+
+export const GetTransactions = async (req: Request, res: Response, next: NextFunction)=>{
+  
+  const transactions = await Transaction.find();
+
+  if(transactions!== null){
+    return res.status(200).json(transactions);
+  }
+  return res.json({"message": "Transactions data not available"})
+}
+
+export const GetTransactionsByID = async (req: Request, res: Response, next: NextFunction)=>{
+ 
+  const {id} = req.params;
+ 
+  const transaction = await Transaction.findById(id);
+ 
+  if (transaction !== null) {
+    return res.json(transaction)
+ 
+  }
+ 
+  return res.json({"message":"Transaction not found"})
+
+}
+
+export const VerifyDeliveryUser = async (req: Request, res: Response, next: NextFunction)=>{
+
+  const {_id, status} = req.body;
+
+  if (_id) {
+
+    const profile = await DeliveryUser.findById(_id);
+
+    if (profile) {
+
+      profile.verified = status;
+
+      const result = await profile.save();
+
+      return res.status(200).json(result);
+    }
+  }
+  return res.status(404).json({message: "Unable to verify Delivery User"});
+}
+
+export const GetDeliveryUsers = async (req: Request, res: Response, next: NextFunction)=>{
+  
+  const deliveryUsers = await DeliveryUser.find();
+  
+  if (deliveryUsers) {
+    return res.status(200).json(deliveryUsers);
+  }
+  
+  return res.json({message: "Unable to get Delivery Users"});
+
 }
