@@ -10,6 +10,7 @@ export interface OfferDoc extends Document {
   startValidity : Date;
   endValidity : Date; 
   promocode : string;
+  promoType : string;
   bank : [any];
   bins : [any];
   pincode : string;
@@ -26,6 +27,7 @@ const OfferSchema = new Schema({
   startValidity : {type : Date, required : true},
   endValidity : Date,
   promocode : {type : String, required : true},
+  promoType : {type : String, required: true},
   bank : {type : String},
   bins : {type : Number},
   pincode : {type : String, required : true},

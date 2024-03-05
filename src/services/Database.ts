@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'; 
 import dotenv from 'dotenv';
-import { MONGODB_URI } from '../config';
 
 (async () => {
   // Load the environment variables
@@ -13,8 +12,8 @@ import { MONGODB_URI } from '../config';
 
 export default async()=>{
   try {
-    console.log(MONGODB_URI)
-    const connectionInstance= await mongoose.connect(`${MONGODB_URI}`)
+    console.log(process.env.MONGODB_URI)
+    const connectionInstance= await mongoose.connect(`${process.env.MONGODB_URI}`)
     console.log(`\nMongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
   } catch (error) {
     console.log("mongodb connection failed at db/index.js", error);
